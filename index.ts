@@ -10,41 +10,40 @@ import {BufferConverter} from './lib/converters/buffer-converter';
 import {JSON} from './lib/json';
 import {JsonElementType} from './lib/decorators/json-element-type';
 import {JsonReadonly} from './lib/decorators/json-readonly';
+import {JsonConstructor} from './lib/decorators/json-constructor';
+import {JsonType} from './lib/decorators/json-type';
 
 @JsonObject()
-export class Another {
-    @JsonProperty()
-    @JsonConverter(new BufferConverter("base64"))
-    public what:Buffer;
+export class EntityRef {
+    public _id:string;
 
-    constructor(what:string) {
-        this.what = Buffer.from(what);
+    @JsonProperty()
+    public id:string;
+
+    @JsonConstructor()
+    public copyId() {
+        this._id = this.id;
+    }
+}
+
+export class Another {
+    public id:string;
+
+    constructor(id:string) {
+        this.id = id;
     }
 }
 
 @JsonObject()
 export class Test {
     @JsonProperty()
-    @JsonReadonly()
-    public another:string;
-
-    @JsonProperty()
-    public date:Date;
-
-    @JsonProperty()
-    public buffer:Buffer;
-
-    @JsonProperty()
-    @JsonElementType(Another)
-    public array:Another[];
+    @JsonType(EntityRef)
+    public array:Another;
 }
 
 let t = new Test();
-t.another = "hello";
-t.date = new Date();
-t.buffer = Buffer.from("hello, world!");
-t.array = [new Another("hello"), new Another("world")];
+t.array = new Another("Hello");
 
-let output = JSON.parse(JSON.stringify(t), Test);
+let output = JSON.parse<Test>(JSON.stringify(t), Test);
 
 let c = "hello";

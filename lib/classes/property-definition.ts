@@ -1,8 +1,7 @@
 import {IPropertyConverter} from '../converters/converter';
-import {Constructor} from '../types';
 
 export class PropertyDefinition {
-    type:Constructor<any>;
+    type:Function;
     collection:boolean = false;
     readonly:boolean = false;
     converter:IPropertyConverter;

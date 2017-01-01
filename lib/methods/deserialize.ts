@@ -1,9 +1,17 @@
-import {Constructor, JsonValue, IDynamicObject, JsonValueObject, JsonValueArray} from '../types';
+import {JsonValue, IDynamicObject, JsonValueObject, JsonValueArray} from '../types';
 import {objectDefinitions} from '../classes/object-definition';
 import {PropertyDefinition} from '../classes/property-definition';
 import {propertyConverters} from '../converters/converter';
 
-export function deserialize<T>(object:JsonValue, type:Constructor<T>):T {
+export function deserialize(object:JsonValue, type:Function) {
+    if (object.constructor === Array) {
+        return (object as JsonValueArray).map(o => deserializeRootObject(o, type));
+    }
+
+    return deserializeRootObject(object, type);
+}
+
+function deserializeRootObject(object:JsonValue, type:Function) {
     let output = Object.create(type.prototype);
 
     if (!objectDefinitions.has(type)) {
@@ -28,6 +36,10 @@ export function deserialize<T>(object:JsonValue, type:Constructor<T>):T {
         
         output[key] = deserializeObject((object as JsonValueObject)[p.serializedName], p);
     });
+
+    if (definition.ctr) {
+        definition.ctr.call(output);
+    }
 
     return output;
 }
