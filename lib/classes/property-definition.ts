@@ -5,7 +5,7 @@ export class PropertyDefinition {
     collection:boolean = false;
     readonly:boolean = false;
     converter:IPropertyConverter;
-    outputName:string;
+    serializedName:string;
 
     constructor() {}
 }

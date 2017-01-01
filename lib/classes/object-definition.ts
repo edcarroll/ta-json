@@ -1,8 +1,6 @@
-import {IJsonObjectOptions} from '../decorators/json-object';
 import {PropertyDefinition} from './property-definition';
 
 export class ObjectDefinition {
-    public options:IJsonObjectOptions = {};
     public properties:Map<string, PropertyDefinition> = new Map<string, PropertyDefinition>();
 
     public getProperty(key:string) {

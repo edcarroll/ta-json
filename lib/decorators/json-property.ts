@@ -6,7 +6,7 @@ export function JsonProperty(propertyName?:string) {
         let type = Reflect.getMetadata("design:type", target, key);
 
         let property = getDefinition(target.constructor).getProperty(key);
-        property.outputName = propertyName || key;
+        property.serializedName = propertyName || key;
         property.collection = type === Array;
         if (!property.collection) {
             property.type = type;

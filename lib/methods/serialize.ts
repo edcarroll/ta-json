@@ -1,6 +1,5 @@
-import {IJsonObjectOptions} from './decorators/json-object';
-import {propertyConverters} from './converters/converter';
-import {objectDefinitions} from './classes/object-definition';
+import {propertyConverters} from './../converters/converter';
+import {objectDefinitions} from './../classes/object-definition';
 
 export interface IDynamicObject {
     constructor:Function;
