@@ -25,12 +25,15 @@ function deserializeRootObject(object:JsonValue, type:Function) {
             throw new Error(`Cannot deserialize property '${key}' without type!`)
         }
 
-        if (p.readonly) {
+        if (!object.hasOwnProperty(key) || p.readonly) {
             return;
         }
 
-        if (p.array) {
+        if (p.array || p.set) {
             output[key] = deserializeArray((object as JsonValueObject)[p.serializedName], p);
+            if (p.set) {
+                output[key] = new Set(output[key]);
+            }
             return;
         }
         
