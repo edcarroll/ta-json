@@ -1,12 +1,14 @@
 import {propertyConverters} from './../converters/converter';
 import {objectDefinitions} from './../classes/object-definition';
+import {PropertyDefinition} from '../classes/property-definition';
+import {JsonValue} from '../types';
 
 export interface IDynamicObject {
     constructor:Function;
     [name:string]:any;
 }
 
-export function serialize(object:IDynamicObject):any {
+export function serialize(object:IDynamicObject):JsonValue {
     if (!objectDefinitions.has(object.constructor)) {
         return object;
     }
@@ -20,24 +22,37 @@ export function serialize(object:IDynamicObject):any {
             throw new Error(`Cannot serialize property '${key}' without type!`)
         }
 
-        let primitive = p.type === String || p.type === Boolean || p.type === Number;
-        let value = object[key];
-
-        if (!primitive) {
-            let converter = p.converter || propertyConverters.get(p.type);
-            let objDefinition = objectDefinitions.get(p.type);
-
-            if (converter) {
-                value = converter.serialize(value);
-            }
-
-            if (objDefinition) {
-                value = serialize(value);
-            }
+        if (p.collection) {
+            output[p.serializedName] = serializeArray(object[key], p);
+            return;
         }
         
-        output[p.serializedName] = value;
+        output[p.serializedName] = serializeObject(object[key], p);
     });
 
     return output;
+}
+
+function serializeArray(array:IDynamicObject[], definition:PropertyDefinition):JsonValue {
+    return array.map(v => serializeObject(v, definition));
+}
+
+function serializeObject(object:IDynamicObject, definition:PropertyDefinition):JsonValue {
+    let primitive = definition.type === String || definition.type === Boolean || definition.type === Number;
+    let value:any = object;
+
+    if (!primitive) {
+        let converter = definition.converter || propertyConverters.get(definition.type);
+        let objDefinition = objectDefinitions.get(definition.type);
+
+        if (converter) {
+            return converter.serialize(value);
+        }
+
+        if (objDefinition) {
+            return serialize(value);
+        }
+    }
+
+    return value;
 }

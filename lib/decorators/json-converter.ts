@@ -1,10 +1,6 @@
 import {getDefinition} from '../classes/object-definition';
 import {IPropertyConverter} from '../converters/converter';
-
-export interface ParameterlessConstructor<T> {
-    name?:string;
-    new():T;
-}
+import {ParameterlessConstructor} from '../types';
 
 export function JsonConverter(converter:IPropertyConverter | ParameterlessConstructor<IPropertyConverter>) {
     return function(target:any, key:string):void {
