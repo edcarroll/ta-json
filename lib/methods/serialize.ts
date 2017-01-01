@@ -3,20 +3,20 @@ import {objectDefinitions} from './../classes/object-definition';
 import {PropertyDefinition} from '../classes/property-definition';
 import {JsonValue, IDynamicObject} from '../types';
 
-export function serialize(value:IDynamicObject | IDynamicObject[]):JsonValue {
+export function serialize(value:IDynamicObject | IDynamicObject[], type?:Function):JsonValue {
     if (value.constructor === Array) {
-        return (value as IDynamicObject[]).map(o => serializeRootObject(o));
+        return (value as IDynamicObject[]).map(o => serializeRootObject(o, type));
     }
 
-    return serializeRootObject(value as IDynamicObject);
+    return serializeRootObject(value as IDynamicObject, type);
 }
 
-function serializeRootObject(object:IDynamicObject):JsonValue {
-    if (!objectDefinitions.has(object.constructor)) {
+function serializeRootObject(object:IDynamicObject, type:Function = object.constructor):JsonValue {
+    if (!objectDefinitions.has(type)) {
         return object;
     }
 
-    const definition = objectDefinitions.get(object.constructor);
+    const definition = objectDefinitions.get(type);
 
     let output:IDynamicObject = {};
 
@@ -64,7 +64,7 @@ function serializeObject(object:IDynamicObject, definition:PropertyDefinition):J
         }
 
         if (objDefinition) {
-            return serialize(value);
+            return serialize(value, definition.type);
         }
     }
 
