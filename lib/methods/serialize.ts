@@ -8,7 +8,15 @@ export interface IDynamicObject {
     [name:string]:any;
 }
 
-export function serialize(object:IDynamicObject):JsonValue {
+export function serialize(value:IDynamicObject | IDynamicObject[]):JsonValue {
+    if (value.constructor === Array) {
+        return (value as IDynamicObject[]).map(o => serializeRootObject(o));
+    }
+
+    return serializeRootObject(value as IDynamicObject);
+}
+
+function serializeRootObject(object:IDynamicObject):JsonValue {
     if (!objectDefinitions.has(object.constructor)) {
         return object;
     }

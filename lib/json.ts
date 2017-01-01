@@ -11,8 +11,8 @@ export class JSON {
         return this.deserialize<T>(global.JSON.parse(json), type);
     }
 
-    public static serialize(object:any):JsonValue {
-        return serialize(object);
+    public static serialize(value:any):JsonValue {
+        return serialize(value);
     }
 
     public static stringify(object:any) {
