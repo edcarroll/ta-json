@@ -8,7 +8,7 @@ export function JsonProperty(propertyName?:string) {
         let property = getDefinition(target.constructor).getProperty(key);
         property.serializedName = propertyName || key;
         property.collection = type === Array;
-        if (!property.collection) {
+        if (!property.collection && !property.type) {
             property.type = type;
         }
     };
