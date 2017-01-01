@@ -29,7 +29,7 @@ function deserializeRootObject(object:JsonValue, type:Function) {
             return;
         }
 
-        if (p.collection) {
+        if (p.array) {
             output[key] = deserializeArray((object as JsonValueObject)[p.serializedName], p);
             return;
         }

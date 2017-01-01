@@ -14,36 +14,14 @@ import {JsonConstructor} from './lib/decorators/json-constructor';
 import {JsonType} from './lib/decorators/json-type';
 
 @JsonObject()
-export class EntityRef {
-    public _id:string;
-
-    @JsonProperty()
-    public id:string;
-
-    @JsonConstructor()
-    public copyId() {
-        this._id = this.id;
-    }
-}
-
-export class Another {
-    public id:string;
-
-    constructor(id:string) {
-        this.id = id;
-    }
-}
-
-@JsonObject()
 export class Test {
     @JsonProperty()
-    @JsonType(EntityRef)
-    public array:Another;
+    @JsonElementType(String)
+    public set:Set<string>;
 }
 
 let t = new Test();
-t.array = new Another("Hello");
 
-let output = JSON.parse<Test>(JSON.stringify(t), Test);
+let output = JSON.stringify(t);
 
 let c = "hello";

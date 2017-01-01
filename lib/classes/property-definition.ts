@@ -2,7 +2,8 @@ import {IPropertyConverter} from '../converters/converter';
 
 export class PropertyDefinition {
     type:Function;
-    collection:boolean = false;
+    array:boolean = false;
+    set:boolean = false;
     readonly:boolean = false;
     converter:IPropertyConverter;
     serializedName:string;

@@ -25,7 +25,12 @@ function serializeRootObject(object:IDynamicObject):JsonValue {
             throw new Error(`Cannot serialize property '${key}' without type!`)
         }
 
-        if (p.collection) {
+        if (p.set && object[key]) {
+            output[p.serializedName] = serializeArray(Array.from(object[key] || []), p);
+            return;
+        }
+
+        if (p.array && object[key]) {
             output[p.serializedName] = serializeArray(object[key], p);
             return;
         }

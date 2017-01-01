@@ -1,6 +1,6 @@
 {
   "name": "@edcarroll/json-decorators",
-  "version": "1.0.0-alpha.1",
+  "version": "1.0.0",
   "description": "Decorators for classes that control how they are serialized and deserialized from JSON",
   "main": "index.js",
   "typings": "index.d.ts",
