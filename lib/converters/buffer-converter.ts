@@ -1,7 +1,7 @@
 import {IPropertyConverter} from './converter';
-import {JsonArray, JsonValue} from '../types';
+import {JsonValueArray, JsonValue} from '../types';
 
-type JsonBuffer = { type:string, data:JsonArray };
+type JsonBuffer = { type:string, data:JsonValueArray };
 
 export class BufferConverter implements IPropertyConverter {
     private _encoding:string;

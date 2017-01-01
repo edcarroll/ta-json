@@ -18,6 +18,7 @@ export class Test {
     public date:Date;
 
     @JsonProperty()
+    @JsonConverter(new BufferConverter("base64"))
     public buffer:Buffer;
 }
 

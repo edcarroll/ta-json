@@ -1,6 +1,7 @@
-export type JsonPrimitive = string | number | boolean | null;
-export interface JsonObject {
+export type JsonValuePrimitive = string | number | boolean | null;
+export interface JsonValueObject {
     [x:string]:JsonValue;
 }
-export interface JsonArray extends Array<JsonValue> {}
-export type JsonValue = JsonPrimitive | JsonObject | JsonArray;
+export interface JsonValueArray extends Array<JsonValue> {}
+
+export type JsonValue = JsonValuePrimitive | JsonValueObject | JsonValueArray;
