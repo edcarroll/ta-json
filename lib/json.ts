@@ -3,11 +3,11 @@ import {deserialize} from './methods/deserialize';
 import {JsonValue, ParameterlessConstructor} from './types';
 
 export class JSON {
-    public static deserialize<T>(object:JsonValue, type:Function):T {
+    public static deserialize<T>(object:JsonValue, type?:Function):T {
         return deserialize(object, type);
     }
     
-    public static parse<T>(json:string, type:Function):T {
+    public static parse<T>(json:string, type?:Function):T {
         return this.deserialize<T>(global.JSON.parse(json), type);
     }
 
@@ -15,7 +15,7 @@ export class JSON {
         return serialize(value);
     }
 
-    public static stringify(object:any) {
+    public static stringify(object:any):string {
         return global.JSON.stringify(this.serialize(object));
     }
 }

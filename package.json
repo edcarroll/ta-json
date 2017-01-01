@@ -1,7 +1,7 @@
 {
-  "name": "@edcarroll/json-decorators",
+  "name": "ta-json",
   "version": "1.0.0",
-  "description": "Decorators for classes that control how they are serialized and deserialized from JSON",
+  "description": "Type-aware JSON serializer/parser",
   "main": "index.js",
   "typings": "index.d.ts",
   "scripts": {
@@ -9,14 +9,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/edcarroll/json-decorators.git"
+    "url": "git+https://github.com/edcarroll/ta-json.git"
   },
   "author": "Edward Carroll",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/edcarroll/json-decorators/issues"
+    "url": "https://github.com/edcarroll/ta-json/issues"
   },
-  "homepage": "https://github.com/edcarroll/json-decorators#readme",
+  "keywords": ["json", "decorator", "es6", "types", "classes", "serializer", "parser"],
+  "homepage": "https://github.com/edcarroll/ta-json#readme",
   "dependencies": {
     "@types/node": "^6.0.55",
     "reflect-metadata": "^0.1.9",

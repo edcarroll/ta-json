@@ -24,22 +24,24 @@ function serializeRootObject(object:IDynamicObject):JsonValue {
         if (!p.type) {
             throw new Error(`Cannot serialize property '${key}' without type!`)
         }
+        
+        let value = object[key];
 
-        if (!object.hasOwnProperty(key)) {
+        if (value === null || value === undefined) {
             return;
         }
 
         if (p.set) {
-            output[p.serializedName] = serializeArray(Array.from(object[key] || []), p);
+            output[p.serializedName] = serializeArray(Array.from(value || []), p);
             return;
         }
 
         if (p.array) {
-            output[p.serializedName] = serializeArray(object[key], p);
+            output[p.serializedName] = serializeArray(value, p);
             return;
         }
         
-        output[p.serializedName] = serializeObject(object[key], p);
+        output[p.serializedName] = serializeObject(value, p);
     });
 
     return output;

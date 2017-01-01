@@ -11,12 +11,12 @@ export function deserialize(object:JsonValue, type:Function) {
     return deserializeRootObject(object, type);
 }
 
-function deserializeRootObject(object:JsonValue, type:Function) {
-    let output = Object.create(type.prototype);
-
+function deserializeRootObject(object:JsonValue, type:Function = Object) {
     if (!objectDefinitions.has(type)) {
-        return output;
+        return object;
     }
+
+    let output = Object.create(type.prototype);
 
     const definition = objectDefinitions.get(type);
 
@@ -25,19 +25,21 @@ function deserializeRootObject(object:JsonValue, type:Function) {
             throw new Error(`Cannot deserialize property '${key}' without type!`)
         }
 
-        if (!object.hasOwnProperty(key) || p.readonly) {
+        let value = (object as JsonValueObject)[p.serializedName];
+
+        if ((value === null || value === undefined) || p.readonly) {
             return;
         }
 
         if (p.array || p.set) {
-            output[key] = deserializeArray((object as JsonValueObject)[p.serializedName], p);
+            output[key] = deserializeArray(value, p);
             if (p.set) {
                 output[key] = new Set(output[key]);
             }
             return;
         }
         
-        output[key] = deserializeObject((object as JsonValueObject)[p.serializedName], p);
+        output[key] = deserializeObject(value, p);
     });
 
     if (definition.ctr) {
