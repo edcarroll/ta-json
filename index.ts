@@ -45,7 +45,6 @@ t.date = new Date();
 t.buffer = Buffer.from("hello, world!");
 t.array = [new Another("hello"), new Another("world")];
 
-let output = JSON.serialize([t]);
+let output = JSON.parse(JSON.stringify(t), Test);
 
-
-let b = "hi";
+let c = "hello";

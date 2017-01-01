@@ -1,12 +1,7 @@
 import {propertyConverters} from './../converters/converter';
 import {objectDefinitions} from './../classes/object-definition';
 import {PropertyDefinition} from '../classes/property-definition';
-import {JsonValue} from '../types';
-
-export interface IDynamicObject {
-    constructor:Function;
-    [name:string]:any;
-}
+import {JsonValue, IDynamicObject} from '../types';
 
 export function serialize(value:IDynamicObject | IDynamicObject[]):JsonValue {
     if (value.constructor === Array) {

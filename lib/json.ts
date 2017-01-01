@@ -3,11 +3,11 @@ import {deserialize} from './methods/deserialize';
 import {Constructor, JsonValue} from './types';
 
 export class JSON {
-    public static deserialize<T>(object:JsonValue, type:Constructor<T>) {
+    public static deserialize<T>(object:JsonValue, type:Constructor<T>):T {
         return deserialize<T>(object, type);
     }
     
-    public static parse<T>(json:string, type:Constructor<T>) {
+    public static parse<T>(json:string, type:Constructor<T>):T {
         return this.deserialize<T>(global.JSON.parse(json), type);
     }
 
