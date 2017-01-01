@@ -1,0 +1,23 @@
+{
+  "name": "@edcarroll/json-decorators",
+  "version": "1.0.0-alpha.1",
+  "description": "Decorators for classes that control how they are serialized and deserialized from JSON",
+  "main": "index.js",
+  "typings": "index.d.ts",
+  "scripts": {
+    "prepublish": "./node_modules/.bin/tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/edcarroll/json-decorators.git"
+  },
+  "author": "Edward Carroll",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/edcarroll/json-decorators/issues"
+  },
+  "homepage": "https://github.com/edcarroll/json-decorators#readme",
+  "dependencies": {
+    "typescript": "~2.0.10"
+  }
+}
