@@ -18,6 +18,8 @@
   },
   "homepage": "https://github.com/edcarroll/json-decorators#readme",
   "dependencies": {
+    "@types/node": "^6.0.55",
+    "reflect-metadata": "^0.1.9",
     "typescript": "~2.0.10"
   }
 }

@@ -1,21 +1,4 @@
-import {jsonObjectDefinitions, getDefinition} from '../dictionary';
-import {JsonObjectPropertyDefinition} from './json-property';
-
-export class JsonObjectDefinition {
-    public options:IJsonObjectOptions = {};
-    public properties:Map<string, JsonObjectPropertyDefinition> = new Map<string, JsonObjectPropertyDefinition>();
-
-    public getProperty(key:string) {
-        let property = this.properties.get(key);
-        if (!property) {
-            property = new JsonObjectPropertyDefinition();
-            this.properties.set(key, property);
-        }
-        return property;
-    }
-
-    constructor() {}
-}
+import {getDefinition} from '../classes/object-definition';
 
 export interface IJsonObjectOptions {
 
