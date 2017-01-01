@@ -149,7 +149,7 @@ Property converters can be used to define how a type is serialized / deserialize
 This example uses the built in `BufferConverter`, to output Buffer values as base64 encoded strings. Note that when parsing documents, the deserializer will convert the value back into a Buffer.
 
 ```typescript
-import {JsonObject, JsonProperty, JsonConverter, BufferConverter} from "ta-json";
+import {JSON, JsonObject, JsonProperty, JsonConverter, BufferConverter} from "ta-json";
 
 @JsonObject()
 export class ConverterDemo {
@@ -174,7 +174,7 @@ parsed.bufferValue.toString(); // hello, world!
 Below we define a converter that reverses any string value it is given.
 
 ```typescript
-import {JsonObject, JsonProperty, JsonConverter, IPropertyConverter} from "ta-json";
+import {JSON, JsonObject, JsonProperty, JsonConverter, IPropertyConverter} from "ta-json";
 
 export class ReverseStringConverter implements IPropertyConverter {
     public serialize(property:string):string {
@@ -207,7 +207,7 @@ The use of this decorator stops the property value being read from the document 
 #### Usage
 
 ```typescript
-import {JsonObject, JsonProperty, JsonReadonly} from "ta-json";
+import {JSON, JsonObject, JsonProperty, JsonReadonly} from "ta-json";
 
 @JsonObject()
 export class Person {
