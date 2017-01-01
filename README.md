@@ -1,4 +1,4 @@
-# Type-Aware JSON (ta-json)
+# Type-Aware JSON Parser & Serializer (ta-json)
 
 Strongly typed JSON parser & serializer for TypeScript / ES7 via decorators. Supports parameterized class constructors, nesting classes, `Array`s and `Set`s, custom property converters and more.
 
