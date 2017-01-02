@@ -2,7 +2,7 @@ import {PropertyDefinition} from './property-definition';
 
 export class ObjectDefinition {
     public ctr:() => void;
-    public discriminatorField:string;
+    public discriminatorProperty:string;
     public discriminatorValue:any;
     public properties:Map<string, PropertyDefinition> = new Map<string, PropertyDefinition>();
 
@@ -41,7 +41,7 @@ export function getChildClassDefinitions(parentType:Function) {
     const parentDef = getDefinition(parentType);
     const childDefs:[Function, ObjectDefinition][] = [];
 
-    if (parentDef.discriminatorField) {
+    if (parentDef.discriminatorProperty) {
         objectDefinitions.forEach((def, type) => {
             const superClass = Object.getPrototypeOf(type.prototype).constructor;
             if (superClass == parentType) {
