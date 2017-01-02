@@ -1,6 +1,8 @@
 # Type-Aware JSON Parser & Serializer (ta-json)
 
-Strongly typed JSON parser & serializer for TypeScript / ES7 via decorators. Supports parameterized class constructors, nesting classes, inheritance, `Array`s and `Set`s, custom property converters and more.
+Strongly typed JSON parser & serializer for TypeScript / ES7 via decorators.
+
+Supports [parameterized class constructors](#jsonobject), nesting classes, [inheritance](#jsondiscrimatorpropertypropertystring--jsondiscriminatorvaluevalueany), [`Array`s and `Set`s](#jsonelementtypetypefunction), [custom property converters](#jsonconverterconverteripropertyconverter--parameterlessconstructor) and more.
 
 ## Installation
 
@@ -142,6 +144,50 @@ export class Demo {
 }
 ```
 
+### @JsonDiscrimatorProperty(property:string) & @JsonDiscriminatorValue(value:any)
+
+These decorators are used when you want to deserialize documents while respecting the class inheritance hierarchy. The discriminator property is used to determine the type of the document, and the descriminator value is set on each subclass so the document can be matched to the appropriate class.
+
+Multi-level inheritance is fully supported, by the @JsonDiscriminatorValue and the @JsonDiscriminatorProperty decorators being applied to the same class.
+
+#### Usage
+
+```typescript
+import {JSON, JsonObject, JsonProperty, JsonDiscriminatorProperty, JsonDiscriminatorValue} from "ta-json";
+
+export enum AnimalType { Cat = 0, Dog = 1 }
+
+@JsonObject()
+@JsonDiscriminatorProperty("type")
+export class Animal {
+    @JsonProperty()
+    type:AnimalType;
+}
+
+@JsonObject()
+@JsonDiscriminatorValue(AnimalType.Cat)
+export class Cat extends Animal {
+    constructor() {
+        super();
+        this.type = AnimalType.Cat;
+    }
+}
+
+@JsonObject()
+@JsonDiscriminatorValue(AnimalType.Dog)
+export class Dog extends Animal {
+    constructor() {
+        super();
+        this.type = AnimalType.Dog;
+    }
+}
+
+let animals = [new Cat(), new Dog()];
+
+JSON.stringify(animals); // [{"type":0},{"type":1}]
+JSON.parse<Animal[]>('[{"type":0},{"type":1}]', Animal); // [ Cat { type: 0 }, Dog { type: 1 } ]
+```
+
 ### @JsonConverter(converter:IPropertyConverter | ParameterlessConstructor<IPropertyConverter>)
 
 Property converters can be used to define how a type is serialized / deserialized. They must implement the `IPropertyConverter` interface, and output a `JsonValue`.
@@ -244,50 +290,6 @@ u.password = "p4ssw0rd";
 
 JSON.stringify(u); // {}
 JSON.parse<User>('{"password":"p4ssw0rd"}', User).password; // p4ssw0rd
-```
-
-### @JsonDiscrimatorProperty(property:string) & @JsonDiscriminatorValue(value:any)
-
-These decorators are used when you want to deserialize documents while respecting the class inheritance hierarchy. The discriminator property is used to determine the type of the document, and the descriminator value is set on each subclass so the document can be matched to the appropriate class.
-
-Multi-level inheritance is fully supported, by the @JsonDiscriminatorValue and the @JsonDiscriminatorProperty decorators being applied to the same class.
-
-#### Usage
-
-```typescript
-import {JSON, JsonObject, JsonProperty, JsonDiscriminatorProperty, JsonDiscriminatorValue} from "ta-json";
-
-export enum AnimalType { Cat = 0, Dog = 1 }
-
-@JsonObject()
-@JsonDiscriminatorProperty("type")
-export class Animal {
-    @JsonProperty()
-    type:AnimalType;
-}
-
-@JsonObject()
-@JsonDiscriminatorValue(AnimalType.Cat)
-export class Cat extends Animal {
-    constructor() {
-        super();
-        this.type = AnimalType.Cat;
-    }
-}
-
-@JsonObject()
-@JsonDiscriminatorValue(AnimalType.Dog)
-export class Dog extends Animal {
-    constructor() {
-        super();
-        this.type = AnimalType.Dog;
-    }
-}
-
-let animals = [new Cat(), new Dog()];
-
-JSON.stringify(animals); // [{"type":0},{"type":1}]
-JSON.parse<Animal[]>('[{"type":0},{"type":1}]', Animal); // [ Cat { type: 0 }, Dog { type: 1 } ]
 ```
 
 ## API
