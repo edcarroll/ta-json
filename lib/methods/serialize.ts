@@ -1,7 +1,7 @@
 import {propertyConverters} from './../converters/converter';
-import {objectDefinitions} from './../classes/object-definition';
 import {PropertyDefinition} from '../classes/property-definition';
 import {JsonValue, IDynamicObject} from '../types';
+import {objectDefinitions, getInheritanceChain} from '../classes/object-definition';
 
 export function serialize(value:IDynamicObject | IDynamicObject[], type?:Function):JsonValue {
     if (value.constructor === Array) {
@@ -11,37 +11,42 @@ export function serialize(value:IDynamicObject | IDynamicObject[], type?:Functio
     return serializeRootObject(value as IDynamicObject, type);
 }
 
-function serializeRootObject(object:IDynamicObject, type:Function = object.constructor):JsonValue {
-    if (!objectDefinitions.has(type)) {
+function serializeRootObject(object:IDynamicObject, type?:Function):JsonValue {
+    const inheritanceTree = new Set<Function>(getInheritanceChain(type ? Object.create(type.prototype) : object));
+    const typedTree = Array.from(inheritanceTree).filter(t => objectDefinitions.has(t)).reverse();
+
+    if (typedTree.length == 0) {
         return object;
     }
 
-    const definition = objectDefinitions.get(type);
+    const definitions = typedTree.map(t => objectDefinitions.get(t));
 
-    let output:IDynamicObject = {};
+    const output:IDynamicObject = {};
 
-    definition.properties.forEach((p, key) => {
-        if (!p.type) {
-            throw new Error(`Cannot serialize property '${key}' without type!`)
-        }
-        
-        let value = object[key];
+    definitions.forEach(d => {
+        d.properties.forEach((p, key) => {
+            if (!p.type) {
+                throw new Error(`Cannot serialize property '${key}' without type!`)
+            }
 
-        if (value === null || value === undefined) {
-            return;
-        }
+            const value = object[key];
 
-        if (p.set) {
-            output[p.serializedName] = serializeArray(Array.from(value || []), p);
-            return;
-        }
+            if ((value === null || value === undefined) || p.writeonly) {
+                return;
+            }
 
-        if (p.array) {
-            output[p.serializedName] = serializeArray(value, p);
-            return;
-        }
-        
-        output[p.serializedName] = serializeObject(value, p);
+            if (p.set) {
+                output[p.serializedName] = serializeArray(Array.from(value || []), p);
+                return;
+            }
+
+            if (p.array) {
+                output[p.serializedName] = serializeArray(value, p);
+                return;
+            }
+
+            output[p.serializedName] = serializeObject(value, p);
+        });
     });
 
     return output;
@@ -52,18 +57,21 @@ function serializeArray(array:IDynamicObject[], definition:PropertyDefinition):J
 }
 
 function serializeObject(object:IDynamicObject, definition:PropertyDefinition):JsonValue {
-    let primitive = definition.type === String || definition.type === Boolean || definition.type === Number;
-    let value:any = object;
+    const primitive = definition.type === String || definition.type === Boolean || definition.type === Number;
+    const value:any = object;
 
     if (!primitive) {
-        let converter = definition.converter || propertyConverters.get(definition.type);
-        let objDefinition = objectDefinitions.get(definition.type);
+        const converter = definition.converter || propertyConverters.get(definition.type);
+        const objDefinition = objectDefinitions.get(definition.type);
 
         if (converter) {
             return converter.serialize(value);
         }
 
         if (objDefinition) {
+            if (value instanceof definition.type) {
+                return serialize(value);
+            }
             return serialize(value, definition.type);
         }
     }

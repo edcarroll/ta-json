@@ -5,6 +5,7 @@ export class PropertyDefinition {
     array:boolean = false;
     set:boolean = false;
     readonly:boolean = false;
+    writeonly:boolean = false;
     converter:IPropertyConverter;
     serializedName:string;
 

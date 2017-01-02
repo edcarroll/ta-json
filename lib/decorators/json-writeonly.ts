@@ -1,9 +1,9 @@
 import {getDefinition} from '../classes/object-definition';
 
-export function JsonReadonly() {
+export function JsonWriteonly() {
     return function(target:any, key:string):void {
         const property = getDefinition(target.constructor).getProperty(key);
 
-        property.readonly = true;
+        property.writeonly = true;
     };
 }

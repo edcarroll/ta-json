@@ -2,6 +2,8 @@ import {PropertyDefinition} from './property-definition';
 
 export class ObjectDefinition {
     public ctr:() => void;
+    public discriminatorField:string;
+    public discriminatorValue:any;
     public properties:Map<string, PropertyDefinition> = new Map<string, PropertyDefinition>();
 
     public getProperty(key:string) {
@@ -25,4 +27,27 @@ export function getDefinition(target:Function) {
         objectDefinitions.set(target, definition);
     }
     return definition;
+}
+
+export function getInheritanceChain(type:Object):Function[] {
+    if (!type) {
+        return [];
+    }
+    const parent = Object.getPrototypeOf(type);
+    return [type.constructor].concat(getInheritanceChain(parent))
+}
+
+export function getChildClassDefinitions(parentType:Function) {
+    const parentDef = getDefinition(parentType);
+    const childDefs:[Function, ObjectDefinition][] = [];
+
+    if (parentDef.discriminatorField) {
+        objectDefinitions.forEach((def, type) => {
+            const superClass = Object.getPrototypeOf(type.prototype).constructor;
+            if (superClass == parentType) {
+                childDefs.push([type, def]);
+            }
+        });
+    }
+    return childDefs;
 }

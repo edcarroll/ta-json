@@ -3,9 +3,9 @@ import {getDefinition} from '../classes/object-definition';
 
 export function JsonProperty(propertyName?:string) {
     return function(target:any, key:string):void {
-        let type = Reflect.getMetadata("design:type", target, key);
+        const type = Reflect.getMetadata("design:type", target, key);
 
-        let property = getDefinition(target.constructor).getProperty(key);
+        const property = getDefinition(target.constructor).getProperty(key);
         property.serializedName = propertyName || key;
         property.array = type === Array;
         property.set = type === Set;
