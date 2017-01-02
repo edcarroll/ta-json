@@ -1,5 +1,5 @@
 import {propertyConverters} from './../converters/converter';
-import {objectDefinitions} from './../classes/object-definition';
+import {objectDefinitions} from '../classes/object-definition';
 import {PropertyDefinition} from '../classes/property-definition';
 import {JsonValue, IDynamicObject} from '../types';
 
@@ -11,37 +11,42 @@ export function serialize(value:IDynamicObject | IDynamicObject[], type?:Functio
     return serializeRootObject(value as IDynamicObject, type);
 }
 
-function serializeRootObject(object:IDynamicObject, type:Function = object.constructor):JsonValue {
-    if (!objectDefinitions.has(type)) {
+function serializeRootObject(object:IDynamicObject, type?:Function):JsonValue {
+    let inheritanceTree = new Set<Function>(getInheritanceChain(type ? Object.create(type.prototype) : object));
+    let typedTree = Array.from(inheritanceTree).filter(t => objectDefinitions.has(t));
+
+    if (typedTree.length == 0) {
         return object;
     }
 
-    const definition = objectDefinitions.get(type);
+    let definitions = typedTree.map(t => objectDefinitions.get(t));
 
     let output:IDynamicObject = {};
 
-    definition.properties.forEach((p, key) => {
-        if (!p.type) {
-            throw new Error(`Cannot serialize property '${key}' without type!`)
-        }
-        
-        let value = object[key];
+    definitions.forEach(d => {
+        d.properties.forEach((p, key) => {
+            if (!p.type) {
+                throw new Error(`Cannot serialize property '${key}' without type!`)
+            }
 
-        if ((value === null || value === undefined) || p.writeonly) {
-            return;
-        }
+            let value = object[key];
 
-        if (p.set) {
-            output[p.serializedName] = serializeArray(Array.from(value || []), p);
-            return;
-        }
+            if ((value === null || value === undefined) || p.writeonly) {
+                return;
+            }
 
-        if (p.array) {
-            output[p.serializedName] = serializeArray(value, p);
-            return;
-        }
-        
-        output[p.serializedName] = serializeObject(value, p);
+            if (p.set) {
+                output[p.serializedName] = serializeArray(Array.from(value || []), p);
+                return;
+            }
+
+            if (p.array) {
+                output[p.serializedName] = serializeArray(value, p);
+                return;
+            }
+
+            output[p.serializedName] = serializeObject(value, p);
+        });
     });
 
     return output;
@@ -64,9 +69,20 @@ function serializeObject(object:IDynamicObject, definition:PropertyDefinition):J
         }
 
         if (objDefinition) {
+            if (value instanceof definition.type) {
+                return serialize(value);
+            }
             return serialize(value, definition.type);
         }
     }
 
     return value;
+}
+
+function getInheritanceChain(type:Object):Function[] {
+    if (!type) {
+        return [];
+    }
+    let parent = Object.getPrototypeOf(type);
+    return [type.constructor].concat(getInheritanceChain(parent))
 }
