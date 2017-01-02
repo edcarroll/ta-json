@@ -144,6 +144,8 @@ export class Demo {
 
 Property converters can be used to define how a type is serialized / deserialized. They must implement the `IPropertyConverter` interface, and output a `JsonValue`.
 
+There are two built in converters, `DateConverter` and `BufferConverter`. They are applied automatically when serializing `Date` and `Buffer` objects.
+
 #### Example
 
 This example uses the built in `BufferConverter`, to output Buffer values as base64 encoded strings. Note that when parsing documents, the deserializer will convert the value back into a Buffer.
