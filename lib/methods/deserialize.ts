@@ -20,7 +20,7 @@ function deserializeRootObject(object:JsonValue, type:Function = Object):any {
     const childDefinitions = getChildClassDefinitions(type);
     if (childDefinitions.length > 0) {
         const parentDefinition = objectDefinitions.get(type);
-        const childDef = childDefinitions.find(([type, def]) => def.discriminatorValue == values[parentDefinition.discriminatorField]);
+        const childDef = childDefinitions.find(([type, def]) => def.discriminatorValue == values[parentDefinition.discriminatorProperty]);
 
         if (childDef) {
             return deserializeRootObject(object, childDef[0]);

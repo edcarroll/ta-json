@@ -1,6 +1,6 @@
 # Type-Aware JSON Parser & Serializer (ta-json)
 
-Strongly typed JSON parser & serializer for TypeScript / ES7 via decorators. Supports parameterized class constructors, nesting classes, `Array`s and `Set`s, custom property converters and more.
+Strongly typed JSON parser & serializer for TypeScript / ES7 via decorators. Supports parameterized class constructors, nesting classes, inheritance, `Array`s and `Set`s, custom property converters and more.
 
 ## Installation
 
@@ -46,6 +46,8 @@ let fromJson = JSON.parse<Person>('{"firstName":"Edward","lastName":"Carroll"}',
 person instanceof Person; // true
 person.fullName; // Edward Carroll
 ```
+
+For more advanced usage please read the docs below for each of the available decorators.
 
 ## Decorators
 
@@ -117,7 +119,7 @@ export class LotteryDraw {
 }
 ```
 
-### @JsonConstructor
+### @JsonConstructor()
 
 Specifies the method to run once a document has been deserialized into a class. This is useful for example when recalculating private members that aren't serialized into JSON.
 
@@ -202,7 +204,7 @@ JSON.stringify(d); // {"example":"olleh"}
 
 Note that you can also provide an instance of a property converter, for example if you want to customize the output. (This is how the `BufferConverter` chooses a string encoding).
 
-### @JsonReadonly
+### @JsonReadonly()
 
 The use of this decorator stops the property value being read from the document by the deserializer.
 
@@ -221,7 +223,7 @@ export class Person {
 JSON.parse<Person>('{"name":"Edward"}', Person).name; // undefined
 ```
 
-### @JsonWriteonly
+### @JsonWriteonly()
 
 The use of this decorator stops the property value being written to the document by the serializer. Useful for password fields for example.
 
@@ -242,6 +244,50 @@ u.password = "p4ssw0rd";
 
 JSON.stringify(u); // {}
 JSON.parse<User>('{"password":"p4ssw0rd"}', User).password; // p4ssw0rd
+```
+
+### @JsonDiscrimatorProperty(property:string) & @JsonDiscriminatorValue(value:any)
+
+These decorators are used when you want to deserialize documents while respecting the class inheritance hierarchy. The discriminator property is used to determine the type of the document, and the descriminator value is set on each subclass so the document can be matched to the appropriate class.
+
+Multi-level inheritance is fully supported, by the @JsonDiscriminatorValue and the @JsonDiscriminatorProperty decorators being applied to the same class.
+
+#### Usage
+
+```typescript
+import {JSON, JsonObject, JsonProperty, JsonDiscriminatorProperty, JsonDiscriminatorValue} from "ta-json";
+
+export enum AnimalType { Cat = 0, Dog = 1 }
+
+@JsonObject()
+@JsonDiscriminatorProperty("type")
+export class Animal {
+    @JsonProperty()
+    type:AnimalType;
+}
+
+@JsonObject()
+@JsonDiscriminatorValue(AnimalType.Cat)
+export class Cat extends Animal {
+    constructor() {
+        super();
+        this.type = AnimalType.Cat;
+    }
+}
+
+@JsonObject()
+@JsonDiscriminatorValue(AnimalType.Dog)
+export class Dog extends Animal {
+    constructor() {
+        super();
+        this.type = AnimalType.Dog;
+    }
+}
+
+let animals = [new Cat(), new Dog()];
+
+JSON.stringify(animals); // [{"type":0},{"type":1}]
+JSON.parse<Animal[]>('[{"type":0},{"type":1}]', Animal); // [ Cat { type: 0 }, Dog { type: 1 } ]
 ```
 
 ## API

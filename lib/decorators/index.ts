@@ -6,5 +6,5 @@ export * from "./json-converter";
 export * from "./json-readonly";
 export * from "./json-writeonly";
 export * from "./json-constructor";
-export * from "./json-discriminator-field";
+export * from "./json-discriminator-property";
 export * from "./json-discriminator-value";
