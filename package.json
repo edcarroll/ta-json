@@ -16,7 +16,15 @@
   "bugs": {
     "url": "https://github.com/edcarroll/ta-json/issues"
   },
-  "keywords": ["json", "decorator", "es6", "types", "classes", "serializer", "parser"],
+  "keywords": [
+    "json",
+    "decorator",
+    "es6",
+    "types",
+    "classes",
+    "serializer",
+    "parser"
+  ],
   "homepage": "https://github.com/edcarroll/ta-json#readme",
   "dependencies": {
     "@types/node": "^6.0.55",

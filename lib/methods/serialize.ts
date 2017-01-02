@@ -1,7 +1,7 @@
 import {propertyConverters} from './../converters/converter';
-import {objectDefinitions} from '../classes/object-definition';
 import {PropertyDefinition} from '../classes/property-definition';
 import {JsonValue, IDynamicObject} from '../types';
+import {objectDefinitions, getInheritanceChain} from '../classes/object-definition';
 
 export function serialize(value:IDynamicObject | IDynamicObject[], type?:Function):JsonValue {
     if (value.constructor === Array) {
@@ -12,16 +12,16 @@ export function serialize(value:IDynamicObject | IDynamicObject[], type?:Functio
 }
 
 function serializeRootObject(object:IDynamicObject, type?:Function):JsonValue {
-    let inheritanceTree = new Set<Function>(getInheritanceChain(type ? Object.create(type.prototype) : object));
-    let typedTree = Array.from(inheritanceTree).filter(t => objectDefinitions.has(t));
+    const inheritanceTree = new Set<Function>(getInheritanceChain(type ? Object.create(type.prototype) : object));
+    const typedTree = Array.from(inheritanceTree).filter(t => objectDefinitions.has(t)).reverse();
 
     if (typedTree.length == 0) {
         return object;
     }
 
-    let definitions = typedTree.map(t => objectDefinitions.get(t));
+    const definitions = typedTree.map(t => objectDefinitions.get(t));
 
-    let output:IDynamicObject = {};
+    const output:IDynamicObject = {};
 
     definitions.forEach(d => {
         d.properties.forEach((p, key) => {
@@ -29,7 +29,7 @@ function serializeRootObject(object:IDynamicObject, type?:Function):JsonValue {
                 throw new Error(`Cannot serialize property '${key}' without type!`)
             }
 
-            let value = object[key];
+            const value = object[key];
 
             if ((value === null || value === undefined) || p.writeonly) {
                 return;
@@ -57,12 +57,12 @@ function serializeArray(array:IDynamicObject[], definition:PropertyDefinition):J
 }
 
 function serializeObject(object:IDynamicObject, definition:PropertyDefinition):JsonValue {
-    let primitive = definition.type === String || definition.type === Boolean || definition.type === Number;
-    let value:any = object;
+    const primitive = definition.type === String || definition.type === Boolean || definition.type === Number;
+    const value:any = object;
 
     if (!primitive) {
-        let converter = definition.converter || propertyConverters.get(definition.type);
-        let objDefinition = objectDefinitions.get(definition.type);
+        const converter = definition.converter || propertyConverters.get(definition.type);
+        const objDefinition = objectDefinitions.get(definition.type);
 
         if (converter) {
             return converter.serialize(value);
@@ -77,12 +77,4 @@ function serializeObject(object:IDynamicObject, definition:PropertyDefinition):J
     }
 
     return value;
-}
-
-function getInheritanceChain(type:Object):Function[] {
-    if (!type) {
-        return [];
-    }
-    let parent = Object.getPrototypeOf(type);
-    return [type.constructor].concat(getInheritanceChain(parent))
 }
