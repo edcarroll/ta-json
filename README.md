@@ -221,6 +221,29 @@ export class Person {
 JSON.parse<Person>('{"name":"Edward"}', Person).name; // undefined
 ```
 
+### @JsonWriteonly
+
+The use of this decorator stops the property value being written to the document by the serializer. Useful for password fields for example.
+
+#### Usage
+
+```typescript
+import {JSON, JsonObject, JsonProperty, JsonReadonly} from "ta-json";
+
+@JsonObject()
+export class User {
+    @JsonProperty()
+    @JsonWriteonly()
+    public password:string;
+}
+
+let u = new User();
+u.password = "p4ssw0rd";
+
+JSON.stringify(u); // {}
+JSON.parse<User>('{"password":"p4ssw0rd"}', User).password; // p4ssw0rd
+```
+
 ## API
 
 ### JSON

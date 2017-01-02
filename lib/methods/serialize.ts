@@ -27,7 +27,7 @@ function serializeRootObject(object:IDynamicObject, type:Function = object.const
         
         let value = object[key];
 
-        if (value === null || value === undefined) {
+        if ((value === null || value === undefined) || p.writeonly) {
             return;
         }
 
