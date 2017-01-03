@@ -36,6 +36,8 @@ function deserializeRootObject(object:JsonValue, type:Function = Object):any {
     const definitions = typedTree.map(t => objectDefinitions.get(t));
 
     definitions.forEach(d => {
+        d.beforeDeserialized.call(output);
+
         d.properties.forEach((p, key) => {
             if (!p.type) {
                 throw new Error(`Cannot deserialize property '${key}' without type!`)
@@ -58,9 +60,7 @@ function deserializeRootObject(object:JsonValue, type:Function = Object):any {
             output[key] = deserializeObject(value, p);
         });
 
-        if (d.ctr) {
-            d.ctr.call(output);
-        }
+        d.onDeserialized.call(output);
     });
 
     return output;
