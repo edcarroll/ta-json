@@ -1,9 +1,9 @@
 import {getDefinition} from '../classes/object-definition';
 
-export function JsonConstructor() {
+export function BeforeDeserialized() {
     return function(target:any, key:string):void {
         const definition = getDefinition(target.constructor);
 
-        definition.ctr = target[key];
+        definition.beforeDeserialized = target[key];
     };
 }

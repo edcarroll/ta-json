@@ -1,10 +1,11 @@
 import {PropertyDefinition} from './property-definition';
 
 export class ObjectDefinition {
-    public ctr:() => void;
+    public beforeDeserialized:() => void;
+    public onDeserialized:() => void;
     public discriminatorProperty:string;
     public discriminatorValue:any;
-    public properties:Map<string, PropertyDefinition> = new Map<string, PropertyDefinition>();
+    public properties:Map<string, PropertyDefinition>;
 
     public getProperty(key:string) {
         let property = this.properties.get(key);
@@ -15,7 +16,11 @@ export class ObjectDefinition {
         return property;
     }
 
-    constructor() {}
+    constructor() {
+        this.beforeDeserialized = () => {};
+        this.onDeserialized = () => {};
+        this.properties = new Map<string, PropertyDefinition>();
+    }
 }
 
 export const objectDefinitions:Map<Function, ObjectDefinition> = new Map<Function, ObjectDefinition>();

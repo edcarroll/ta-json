@@ -57,6 +57,8 @@ For more advanced usage please read the docs below for each of the available dec
 
 Registers the class with the serializer. Classes don't need to have parameterless constructors to be serialized and parsed - however this means that the internal state of a class must be fully represented by its serialized fields.
 
+If you would like to run functions before and after deserialization, please see [@BeforeDeserialized()](#beforedeserialized) and [@OnDeserialized()](#ondeserialized)
+
 #### Usage
 
 ```typescript
@@ -121,29 +123,6 @@ export class LotteryDraw {
 }
 ```
 
-### @JsonConstructor()
-
-Specifies the method to run once a document has been deserialized into a class. This is useful for example when recalculating private members that aren't serialized into JSON.
-
-#### Usage
-
-```typescript
-import {JsonObject, JsonProperty, JsonConstructor} from "ta-json";
-
-@JsonObject()
-export class Demo {
-    private _unserialized:string;
-
-    @JsonProperty()
-    public serialized:string;
-
-    @JsonConstructor()
-    public jsonConstructor() {
-        this._unserialized = doOperation(this.serialized);
-    }
-}
-```
-
 ### @JsonDiscrimatorProperty(property:string) & @JsonDiscriminatorValue(value:any)
 
 These decorators are used when you want to deserialize documents while respecting the class inheritance hierarchy. The discriminator property is used to determine the type of the document, and the descriminator value is set on each subclass so the document can be matched to the appropriate class.
@@ -186,6 +165,50 @@ let animals = [new Cat(), new Dog()];
 
 JSON.stringify(animals); // [{"type":0},{"type":1}]
 JSON.parse<Animal[]>('[{"type":0},{"type":1}]', Animal); // [ Cat { type: 0 }, Dog { type: 1 } ]
+```
+
+### @BeforeDeserialized()
+
+Specifies the method to run before a document has been deserialized into a class, but after the class has been instantiated. This is useful for setting default values that may be overwritten by the deserialization.
+
+#### Usage
+
+```typescript
+import {JsonObject, JsonProperty, BeforeDeserialized} from "ta-json";
+
+@JsonObject()
+export class Demo {
+    @JsonProperty()
+    public serialized:string;
+
+    @BeforeDeserialized()
+    public setDefaults() {
+        this.serialized = "default value";
+    }
+}
+```
+
+### @OnDeserialized()
+
+Specifies the method to run once a document has been deserialized into a class. This is useful for example when recalculating private members that aren't serialized into JSON.
+
+#### Usage
+
+```typescript
+import {JsonObject, JsonProperty, OnDeserialized} from "ta-json";
+
+@JsonObject()
+export class Demo {
+    private _unserialized:string;
+
+    @JsonProperty()
+    public serialized:string;
+
+    @OnDeserialized()
+    public onDeserialized() {
+        this._unserialized = doOperation(this.serialized);
+    }
+}
 ```
 
 ### @JsonConverter(converter:IPropertyConverter | ParameterlessConstructor<IPropertyConverter>)
