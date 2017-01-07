@@ -211,6 +211,35 @@ export class Demo {
 }
 ```
 
+### @JsonConstructor()
+
+Specifies the method to be *optionally* run before a document has been deserialized. The specified method is only run when `runConstructor` is set to `true` in the parse options.
+
+#### Usage
+
+```typescript
+import {JSON, JsonObject, JsonProperty, JsonConstructor} from "ta-json";
+
+@JsonObject()
+export class Demo {
+    @JsonProperty()
+    public example:string;
+
+    constructor(example:string) {
+        this.defaultValues(example);
+    }
+
+    @JsonConstructor()
+    private defaultValues(example:string = "default") {
+        this.example = example;
+    }
+}
+
+JSON.parse<Demo>('{}', Demo, { runConstructor: true }); // Demo { example: 'default' }
+JSON.parse<Demo>('{"example":"different"}', Demo, { runConstructor: true }) // Demo { example: 'different' }
+JSON.parse<Demo>('{}', Demo); // Demo {}
+```
+
 ### @JsonConverter(converter:IPropertyConverter | ParameterlessConstructor<IPropertyConverter>)
 
 Property converters can be used to define how a type is serialized / deserialized. They must implement the `IPropertyConverter` interface, and output a `JsonValue`.
@@ -323,14 +352,18 @@ JSON.parse<User>('{"password":"p4ssw0rd"}', User).password; // p4ssw0rd
 
 Serializes an object or array into a JSON string. If type definitions aren't found for a given object it falls back to `global.JSON.stringify(value)`.
 
-#### #parse<T>(json:string, type?:Function):T
+#### #parse<T>(json:string, type?:Function, options?:IParseOptions):T
 
 Parses a JSON string into an instance of a class. the `type` parameter specifies which class to instantiate; however this is an optional parameter and as with `#stringify` it will fall back to `global.JSON.parse(json)`.
 
+##### IParseOptions
+
+* runConstructor:boolean - specifies whether the method decorated with @JsonConstructor() is run upon class initialisation. **Default `false`**
+
 #### #serialize(value:any):JsonValue
 
-Serializes an object or array into a `JsonValue`. This is an intermediary step; i.e. `global.JSON.stringify` can be called on the returned object to get a JSON string.
+Serializes an object or array into a `JsonValue`. This is an intermediary step; i.e. `global.JSON.stringify` can be called on the returned object to get a JSON string. This function is useful when returning from inside an express (o.e) middleware.
 
-#### #deserialize<T>(object:JsonValue, type?:Function):T
+#### #deserialize<T>(object:JsonValue, type?:Function, options?:IParseOptions):T
 
-Similarly to the above, this function can be run on objects produced by `global.JSON.parse`, returning the same output as `#parse`.
+Similarly to the above, this function can be run on objects produced by `global.JSON.parse`, returning the same output as `#parse`. This function is useful in combination with body parsing modules, where the raw JSON has already been parsed into an object.

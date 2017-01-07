@@ -15,3 +15,7 @@ export interface IDynamicObject {
     constructor:Function;
     [name:string]:any;
 }
+
+export interface IParseOptions {
+    runConstructor?:boolean;
+}
