@@ -7,5 +7,6 @@ export * from "./json-readonly";
 export * from "./json-writeonly";
 export * from "./json-discriminator-property";
 export * from "./json-discriminator-value";
+export * from "./json-constructor";
 export * from "./before-deserialized";
 export * from "./on-deserialized";

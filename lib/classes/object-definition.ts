@@ -1,6 +1,7 @@
 import {PropertyDefinition} from './property-definition';
 
 export class ObjectDefinition {
+    public ctr:() => void;
     public beforeDeserialized:() => void;
     public onDeserialized:() => void;
     public discriminatorProperty:string;
@@ -17,6 +18,7 @@ export class ObjectDefinition {
     }
 
     constructor() {
+        this.ctr = () => {};
         this.beforeDeserialized = () => {};
         this.onDeserialized = () => {};
         this.properties = new Map<string, PropertyDefinition>();

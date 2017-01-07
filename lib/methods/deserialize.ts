@@ -1,17 +1,17 @@
-import {JsonValue, IDynamicObject, JsonValueObject, JsonValueArray} from '../types';
+import {JsonValue, IDynamicObject, JsonValueObject, JsonValueArray, IParseOptions} from '../types';
 import {objectDefinitions, getInheritanceChain, getChildClassDefinitions} from '../classes/object-definition';
 import {PropertyDefinition} from '../classes/property-definition';
 import {propertyConverters} from '../converters/converter';
 
-export function deserialize(object:JsonValue, type:Function) {
+export function deserialize(object:JsonValue, type:Function, options:IParseOptions = { runConstructor: false }) {
     if (object.constructor === Array) {
-        return (object as JsonValueArray).map(o => deserializeRootObject(o, type));
+        return (object as JsonValueArray).map(o => deserializeRootObject(o, type, options));
     }
 
-    return deserializeRootObject(object, type);
+    return deserializeRootObject(object, type, options);
 }
 
-function deserializeRootObject(object:JsonValue, type:Function = Object):any {
+function deserializeRootObject(object:JsonValue, type:Function = Object, options:IParseOptions):any {
     const inheritanceTree = new Set<Function>(getInheritanceChain(Object.create(type.prototype)));
     const typedTree = Array.from(inheritanceTree).filter(t => objectDefinitions.has(t)).reverse();
 
@@ -23,7 +23,7 @@ function deserializeRootObject(object:JsonValue, type:Function = Object):any {
         const childDef = childDefinitions.find(([type, def]) => def.discriminatorValue == values[parentDefinition.discriminatorProperty]);
 
         if (childDef) {
-            return deserializeRootObject(object, childDef[0]);
+            return deserializeRootObject(object, childDef[0], options);
         }
     }
 
@@ -36,6 +36,10 @@ function deserializeRootObject(object:JsonValue, type:Function = Object):any {
     const definitions = typedTree.map(t => objectDefinitions.get(t));
 
     definitions.forEach(d => {
+        if (options.runConstructor) {
+            d.ctr.call(output);
+        }
+
         d.beforeDeserialized.call(output);
 
         d.properties.forEach((p, key) => {
@@ -50,14 +54,14 @@ function deserializeRootObject(object:JsonValue, type:Function = Object):any {
             }
 
             if (p.array || p.set) {
-                output[key] = deserializeArray(value, p);
+                output[key] = deserializeArray(value, p, options);
                 if (p.set) {
                     output[key] = new Set(output[key]);
                 }
                 return;
             }
 
-            output[key] = deserializeObject(value, p);
+            output[key] = deserializeObject(value, p, options);
         });
 
         d.onDeserialized.call(output);
@@ -66,11 +70,11 @@ function deserializeRootObject(object:JsonValue, type:Function = Object):any {
     return output;
 }
 
-function deserializeArray(array:JsonValue, definition:PropertyDefinition):IDynamicObject {
-    return (array as JsonValueArray).map(v => deserializeObject(v, definition));
+function deserializeArray(array:JsonValue, definition:PropertyDefinition, options:IParseOptions):IDynamicObject {
+    return (array as JsonValueArray).map(v => deserializeObject(v, definition, options));
 }
 
-function deserializeObject(object:JsonValue, definition:PropertyDefinition):IDynamicObject {
+function deserializeObject(object:JsonValue, definition:PropertyDefinition, options:IParseOptions):IDynamicObject {
     const primitive = definition.type === String || definition.type === Boolean || definition.type === Number;
     const value:any = object;
 

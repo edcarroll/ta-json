@@ -1,6 +1,6 @@
 {
   "name": "ta-json",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Type-aware JSON serializer/parser",
   "main": "index.js",
   "typings": "index.d.ts",
@@ -19,7 +19,9 @@
   "keywords": [
     "json",
     "decorator",
+    "decorators",
     "es6",
+    "es7",
     "types",
     "classes",
     "serializer",
