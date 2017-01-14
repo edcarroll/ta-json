@@ -15,6 +15,10 @@ function deserializeRootObject(object:JsonValue, type:Function = Object, options
     const inheritanceTree = new Set<Function>(getInheritanceChain(Object.create(type.prototype)));
     const typedTree = Array.from(inheritanceTree).filter(t => objectDefinitions.has(t)).reverse();
 
+    if (typedTree.length == 0) {
+        return object;
+    }
+    
     const values = object as JsonValueObject;
 
     const childDefinitions = getChildClassDefinitions(type);
@@ -25,10 +29,6 @@ function deserializeRootObject(object:JsonValue, type:Function = Object, options
         if (childDef) {
             return deserializeRootObject(object, childDef[0], options);
         }
-    }
-
-    if (typedTree.length == 0) {
-        return object;
     }
 
     const output = Object.create(type.prototype);
