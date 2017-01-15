@@ -1,7 +1,7 @@
 import {propertyConverters} from './../converters/converter';
 import {PropertyDefinition} from '../classes/property-definition';
 import {JsonValue, IDynamicObject} from '../types';
-import {objectDefinitions, getInheritanceChain} from '../classes/object-definition';
+import {objectDefinitions, getInheritanceChain, getTypedInheritanceChain} from '../classes/object-definition';
 
 export function serialize(value:IDynamicObject | IDynamicObject[], type?:Function):JsonValue {
     if (value.constructor === Array) {
@@ -11,15 +11,14 @@ export function serialize(value:IDynamicObject | IDynamicObject[], type?:Functio
     return serializeRootObject(value as IDynamicObject, type);
 }
 
-function serializeRootObject(object:IDynamicObject, type?:Function):JsonValue {
-    const inheritanceTree = new Set<Function>(getInheritanceChain(type ? Object.create(type.prototype) : object));
-    const typedTree = Array.from(inheritanceTree).filter(t => objectDefinitions.has(t)).reverse();
-
-    if (typedTree.length == 0) {
+function serializeRootObject(object:IDynamicObject, type:Function = Object.getPrototypeOf(object).constructor):JsonValue {
+    const inheritanceChain = getTypedInheritanceChain(type);
+    
+    if (inheritanceChain.length == 0) {
         return object;
     }
 
-    const definitions = typedTree.map(t => objectDefinitions.get(t));
+    const definitions = inheritanceChain.map(t => objectDefinitions.get(t));
 
     const output:IDynamicObject = {};
 
