@@ -59,13 +59,13 @@ function serializeObject(object:IDynamicObject, definition:PropertyDefinition):J
     const primitive = definition.type === String || definition.type === Boolean || definition.type === Number;
     const value:any = object;
 
-    if (!primitive) {
-        const converter = definition.converter || propertyConverters.get(definition.type);
-        const objDefinition = objectDefinitions.get(definition.type);
+    const converter = definition.converter || propertyConverters.get(definition.type);
+    if (converter) {
+        return converter.serialize(value);
+    }
 
-        if (converter) {
-            return converter.serialize(value);
-        }
+    if (!primitive) {
+        const objDefinition = objectDefinitions.get(definition.type);
 
         if (objDefinition) {
             if (value instanceof definition.type) {

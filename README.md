@@ -284,7 +284,7 @@ export class ReverseStringConverter implements IPropertyConverter {
     }
 
     public deserialize(value:string):string {
-        return property.split('').reverse().join('');
+        return value.split('').reverse().join('');
     }
 }
 
