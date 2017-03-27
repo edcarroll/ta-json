@@ -1,4 +1,5 @@
 import {PropertyDefinition} from './property-definition';
+import {JsonValueObject} from '../types';
 
 export class ObjectDefinition {
     public ctr:() => void;
@@ -44,17 +45,50 @@ export function getInheritanceChain(type:Object):Function[] {
     return [type.constructor].concat(getInheritanceChain(parent))
 }
 
-export function getChildClassDefinitions(parentType:Function) {
-    const parentDef = getDefinition(parentType);
+function getChildClassDefinitions(parentType:Function):[Function, ObjectDefinition][] {
     const childDefs:[Function, ObjectDefinition][] = [];
 
-    if (parentDef.discriminatorProperty) {
-        objectDefinitions.forEach((def, type) => {
-            const superClass = Object.getPrototypeOf(type.prototype).constructor;
-            if (superClass == parentType) {
-                childDefs.push([type, def]);
-            }
-        });
-    }
+    objectDefinitions.forEach((def, type) => {
+        const superClass = Object.getPrototypeOf(type.prototype).constructor;
+        if (superClass == parentType) {
+            childDefs.push([type, def]);
+        }
+    });
+    
     return childDefs;
+}
+
+export function getTypedInheritanceChain(type:Function, object?:JsonValueObject):Function[] {
+    const parentDef = objectDefinitions.get(type);
+    
+    let childDefs:[Function, ObjectDefinition][] = [];
+    
+    if (object && parentDef.discriminatorProperty) {
+        childDefs = childDefs.concat(getChildClassDefinitions(type));
+    }
+
+    let actualType:Function;
+
+    while (childDefs.length != 0 && !actualType) {
+        const [type, def] = childDefs.shift();
+        
+        if (def.hasOwnProperty("discriminatorValue")) {
+            if (def.discriminatorValue == object[parentDef.discriminatorProperty]) {
+                if (def.hasOwnProperty("discriminatorProperty")) {
+                    return getTypedInheritanceChain(type, object);
+                }
+                actualType = type;
+            }
+        }
+        else {
+            childDefs = childDefs.concat(getChildClassDefinitions(type));
+        }
+    }
+
+    if (!actualType) {
+        actualType = type;
+    }
+
+    let inheritanceChain = new Set<Function>(getInheritanceChain(Object.create(actualType.prototype)));
+    return Array.from(inheritanceChain).filter(t => objectDefinitions.has(t));
 }

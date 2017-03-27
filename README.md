@@ -125,7 +125,7 @@ export class LotteryDraw {
 
 ### @JsonDiscrimatorProperty(property:string) & @JsonDiscriminatorValue(value:any)
 
-These decorators are used when you want to deserialize documents while respecting the class inheritance hierarchy. The discriminator property is used to determine the type of the document, and the descriminator value is set on each subclass so the document can be matched to the appropriate class.
+These decorators are used when you want to deserialize documents while respecting the class inheritance hierarchy. The discriminator property is used to determine the type of the document, and the descriminator value is set on each subclass (or deeper subclasses) so the document can be matched to the appropriate class.
 
 Multi-level inheritance is fully supported, by the @JsonDiscriminatorValue and the @JsonDiscriminatorProperty decorators being applied to the same class.
 
@@ -284,7 +284,7 @@ export class ReverseStringConverter implements IPropertyConverter {
     }
 
     public deserialize(value:string):string {
-        return property.split('').reverse().join('');
+        return value.split('').reverse().join('');
     }
 }
 
