@@ -8,7 +8,7 @@ export class JSON {
     }
     
     public static parse<T>(json:string, type?:Function, options?:IParseOptions):T {
-        return this.deserialize<T>(global.JSON.parse(json), type);
+        return this.deserialize<T>(global.JSON.parse(json), type, options);
     }
 
     public static serialize(value:any):JsonValue {
