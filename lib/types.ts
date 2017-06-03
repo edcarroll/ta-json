@@ -6,9 +6,9 @@ export interface JsonValueArray extends Array<JsonValue> {}
 
 export type JsonValue = JsonValuePrimitive | JsonValueObject | JsonValueArray;
 
-export interface ParameterlessConstructor<T> {
+export interface Constructor<T> {
     name?:string;
-    new():T;
+    new(...args:any[]):T;
 }
 
 export interface IDynamicObject {
