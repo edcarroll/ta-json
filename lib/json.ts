@@ -1,13 +1,13 @@
 import {serialize} from './methods/serialize';
 import {deserialize} from './methods/deserialize';
-import {JsonValue, IParseOptions, Constructor} from './types';
+import {JsonValue, IParseOptions} from './types';
 
 export class JSON {
-    public static deserialize<T>(object:any, type?:Constructor<T>, options?:IParseOptions):T {
-        return deserialize(object, type as Function, options);
+    public static deserialize<T>(object:any, type?:Function, options?:IParseOptions):T {
+        return deserialize(object, type, options);
     }
     
-    public static parse<T>(json:string, type?:Constructor<T>, options?:IParseOptions):T {
+    public static parse<T>(json:string, type?:Function, options?:IParseOptions):T {
         return this.deserialize<T>(global.JSON.parse(json), type, options);
     }
 

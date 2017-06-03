@@ -1,6 +1,6 @@
 {
   "name": "ta-json",
-  "version": "2.2.3",
+  "version": "2.2.4",
   "description": "Type-aware JSON serializer/parser",
   "main": "index.js",
   "typings": "index.d.ts",

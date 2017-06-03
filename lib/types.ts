@@ -11,11 +11,6 @@ export interface ParameterlessConstructor<T> {
     new():T;
 }
 
-export interface Constructor<T> {
-    name?:string;
-    new(...args:any[]):T;
-}
-
 export interface IDynamicObject {
     constructor:Function;
     [name:string]:any;
