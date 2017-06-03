@@ -360,10 +360,10 @@ Parses a JSON string into an instance of a class. the `type` parameter specifies
 
 * runConstructor:boolean - specifies whether the method decorated with @JsonConstructor() is run upon class initialisation. **Default `false`**
 
-#### #serialize(value:any):JsonValue
+#### #serialize(value:any):any
 
 Serializes an object or array into a `JsonValue`. This is an intermediary step; i.e. `global.JSON.stringify` can be called on the returned object to get a JSON string. This function is useful when returning from inside an express (o.e) middleware.
 
-#### #deserialize<T>(object:JsonValue, type?:Function, options?:IParseOptions):T
+#### #deserialize<T>(object:any, type?:Function, options?:IParseOptions):T
 
 Similarly to the above, this function can be run on objects produced by `global.JSON.parse`, returning the same output as `#parse`. This function is useful in combination with body parsing modules, where the raw JSON has already been parsed into an object.
