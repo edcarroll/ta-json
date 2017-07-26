@@ -2,10 +2,15 @@
   "name": "ta-json",
   "version": "2.2.4",
   "description": "Type-aware JSON serializer/parser",
-  "main": "index.js",
-  "typings": "index.d.ts",
+  "main": "dist/cjs/index.js",
+  "types": "dist/es6/index.d.ts",
+  "module": "dist/es6/index.js",
   "scripts": {
-    "prepublish": "./node_modules/.bin/tsc"
+    "lint": "tslint -c tslint.json --type-check --project ./tsconfig.json",
+    "compile": "tsc && tsc -p tsconfig.cjs.json",
+    "compile:w": "tsc -w",
+    "prepublishOnly": "npm run build",
+    "build": "npm run lint && npm run compile"
   },
   "repository": {
     "type": "git",
