@@ -1,5 +1,12 @@
 # Type-Aware JSON Parser & Serializer (ta-json)
 
+<a href="https://www.npmjs.com/package/ta-json">
+  <img alt="npm" src="https://img.shields.io/npm/v/ta-json.svg?style=flat-square" />
+</a>
+<a href="https://travis-ci.org/edcarroll/ta-json">
+  <img alt="Travis CI" src="https://img.shields.io/travis/edcarroll/ta-json.svg?style=flat-square" />
+</a>
+
 Strongly typed JSON parser & serializer for TypeScript / ES7 via decorators.
 
 Supports [parameterized class constructors](#jsonobject), nesting classes, [inheritance](#jsondiscrimatorpropertypropertystring--jsondiscriminatorvaluevalueany), [`Array`s and `Set`s](#jsonelementtypetypefunction), [custom property converters](#jsonconverterconverteripropertyconverter--parameterlessconstructor) and more.
