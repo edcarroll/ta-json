@@ -1,10 +1,10 @@
 import {JsonValue, IDynamicObject, JsonValueObject, JsonValueArray, IParseOptions} from '../types';
-import {objectDefinitions, getTypedInheritanceChain} from '../classes/object-definition';
+import {objectDefinitions, getTypedInheritanceChain, ObjectDefinition} from "../classes/object-definition";
 import {PropertyDefinition} from '../classes/property-definition';
 import {propertyConverters} from '../converters/converter';
 
-export function deserialize(object:JsonValue, type:Function, options:IParseOptions = { runConstructor: false }) {
-    if (object.constructor === Array) {
+export function deserialize(object:JsonValue, type?:Function, options:IParseOptions = { runConstructor: false }) {
+    if (object && object.constructor === Array) {
         return (object as JsonValueArray).map(o => deserializeRootObject(o, type, options));
     }
 
@@ -22,7 +22,7 @@ function deserializeRootObject(object:JsonValue, objectType:Function = Object, o
 
     const output = Object.create(type.prototype);
 
-    const definitions = [...superTypes.reverse(), type].map(t => objectDefinitions.get(t));
+    const definitions = [...superTypes.reverse(), type].map(t => objectDefinitions.get(t)).filter(t => !!t) as ObjectDefinition[];
 
     definitions.forEach(d => {
         if (options.runConstructor) {
