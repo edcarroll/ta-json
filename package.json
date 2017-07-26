@@ -38,6 +38,6 @@
     "reflect-metadata": "^0.1.9"
   },
   "devDependencies": {
-    "typescript": "^2.0.10"
+    "typescript": "^2.3.4"
   }
 }
