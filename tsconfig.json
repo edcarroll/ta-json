@@ -1,20 +1,19 @@
 {
     "compilerOptions": {
         "target": "es5",
-        "module": "commonjs",
+        "module": "es6",
         "moduleResolution": "node",
-        "lib": ["es6"],
+        "lib": ["es2015"],
         "noEmitOnError": true,
+        "strict": true,
         "noImplicitAny": true,
         "declaration": true,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "sourceMap": true,
-        "typeRoots": [
-            "node_modules/@types"
-        ]
+        "outDir": "dist/es6"
     },
-    "files": [
-        "index.ts"
+    "include": [
+        "src/**/*.ts"
     ]
 }
