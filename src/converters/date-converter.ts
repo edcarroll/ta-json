@@ -1,4 +1,4 @@
-import {IPropertyConverter} from './converter';
+import { IPropertyConverter } from "./converter";
 
 export class DateConverter implements IPropertyConverter {
     public serialize(property:Date):string {

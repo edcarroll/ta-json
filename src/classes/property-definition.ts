@@ -1,13 +1,13 @@
-import {IPropertyConverter} from '../converters/converter';
+import { IPropertyConverter } from "../converters/converter";
 
 export class PropertyDefinition {
-    type:Function;
-    array:boolean = false;
-    set:boolean = false;
-    readonly:boolean = false;
-    writeonly:boolean = false;
-    converter:IPropertyConverter;
-    serializedName:string;
+    public type:Function;
+    public array:boolean = false;
+    public set:boolean = false;
+    public readonly:boolean = false;
+    public writeonly:boolean = false;
+    public converter:IPropertyConverter;
+    public serializedName:string;
 
     constructor() {}
 }

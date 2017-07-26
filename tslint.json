@@ -1,0 +1,4 @@
+{
+  "extends": "@edcarroll/code-style/tslint",
+  "rules": {}
+}

@@ -1,6 +1,6 @@
-import {DateConverter} from './date-converter';
-import {BufferConverter} from './buffer-converter';
-import {JsonValue} from '../types';
+import { DateConverter } from "./date-converter";
+import { BufferConverter } from "./buffer-converter";
+import { JsonValue } from "../types";
 
 export interface IPropertyConverter {
     serialize(property:any):JsonValue;
