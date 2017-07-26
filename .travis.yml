@@ -1,0 +1,9 @@
+language: node_js
+node_js:
+  - "7"
+
+before_install:
+  - if [[ `npm -v` != 5* ]]; then npm i -g npm@5; fi
+
+script:
+  - npm run build
