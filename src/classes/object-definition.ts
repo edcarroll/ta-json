@@ -70,7 +70,7 @@ export function getTypedInheritanceChain(type:Function, object?:JsonValueObject)
     let actualType:Function | undefined;
 
     while (childDefs.length !== 0 && !actualType) {
-        const [[t, def]] = childDefs;
+        const [t, def] = childDefs.shift()!; // We are checking the length in the loop so an assertion here is fine.
 
         if (def.hasOwnProperty("discriminatorValue")) {
             if (object && parentDef && def.discriminatorValue === object[parentDef.discriminatorProperty]) {
