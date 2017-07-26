@@ -1,9 +1,9 @@
-import {JsonValue, IDynamicObject, JsonValueObject, JsonValueArray, IParseOptions} from '../types';
-import {objectDefinitions, getTypedInheritanceChain, ObjectDefinition} from "../classes/object-definition";
-import {PropertyDefinition} from '../classes/property-definition';
-import {propertyConverters} from '../converters/converter';
+import { JsonValue, IDynamicObject, JsonValueObject, JsonValueArray, IParseOptions } from "../types";
+import { objectDefinitions, getTypedInheritanceChain, ObjectDefinition } from "../classes/object-definition";
+import { PropertyDefinition } from "../classes/property-definition";
+import { propertyConverters } from "../converters/converter";
 
-export function deserialize(object:JsonValue, type?:Function, options:IParseOptions = { runConstructor: false }) {
+export function deserialize(object:JsonValue, type?:Function, options:IParseOptions = { runConstructor: false }):any {
     if (object && object.constructor === Array) {
         return (object as JsonValueArray).map(o => deserializeRootObject(o, type, options));
     }
@@ -33,19 +33,19 @@ function deserializeRootObject(object:JsonValue, objectType:Function = Object, o
 
         d.properties.forEach((p, key) => {
             if (!p.type) {
-                throw new Error(`Cannot deserialize property '${key}' without type!`)
+                throw new Error(`Cannot deserialize property '${key}' without type!`);
             }
 
             const value = values[p.serializedName];
 
-            if ((value === null || value === undefined) || p.readonly) {
+            if (value == undefined || p.readonly) {
                 return;
             }
 
             if (p.array || p.set) {
                 output[key] = deserializeArray(value, p, options);
                 if (p.set) {
-                    output[key] = new Set(output[key]);
+                    output[key] = new Set<any>(output[key]);
                 }
                 return;
             }

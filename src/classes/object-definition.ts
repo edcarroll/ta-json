@@ -1,5 +1,5 @@
-import {PropertyDefinition} from './property-definition';
-import {JsonValueObject} from '../types';
+import { PropertyDefinition } from "./property-definition";
+import { JsonValueObject } from "../types";
 
 export class ObjectDefinition {
     public ctr:() => void;
@@ -9,7 +9,14 @@ export class ObjectDefinition {
     public discriminatorValue:any;
     public properties:Map<string, PropertyDefinition>;
 
-    public getProperty(key:string) {
+    constructor() {
+        this.ctr = () => {};
+        this.beforeDeserialized = () => {};
+        this.onDeserialized = () => {};
+        this.properties = new Map<string, PropertyDefinition>();
+    }
+
+    public getProperty(key:string):PropertyDefinition {
         let property = this.properties.get(key);
         if (!property) {
             property = new PropertyDefinition();
@@ -17,18 +24,11 @@ export class ObjectDefinition {
         }
         return property;
     }
-
-    constructor() {
-        this.ctr = () => {};
-        this.beforeDeserialized = () => {};
-        this.onDeserialized = () => {};
-        this.properties = new Map<string, PropertyDefinition>();
-    }
 }
 
 export const objectDefinitions:Map<Function, ObjectDefinition> = new Map<Function, ObjectDefinition>();
 
-export function getDefinition(target:Function) {
+export function getDefinition(target:Function):ObjectDefinition {
     let definition = objectDefinitions.get(target);
     if (!definition) {
         definition = new ObjectDefinition();
@@ -42,7 +42,7 @@ export function getInheritanceChain(type:Object):Function[] {
         return [];
     }
     const parent = Object.getPrototypeOf(type);
-    return [type.constructor].concat(getInheritanceChain(parent))
+    return [type.constructor].concat(getInheritanceChain(parent));
 }
 
 function getChildClassDefinitions(parentType:Function):[Function, ObjectDefinition][] {
@@ -50,38 +50,37 @@ function getChildClassDefinitions(parentType:Function):[Function, ObjectDefiniti
 
     objectDefinitions.forEach((def, type) => {
         const superClass = Object.getPrototypeOf(type.prototype).constructor;
-        if (superClass == parentType) {
+        if (superClass === parentType) {
             childDefs.push([type, def]);
         }
     });
-    
+
     return childDefs;
 }
 
 export function getTypedInheritanceChain(type:Function, object?:JsonValueObject):Function[] {
     const parentDef = objectDefinitions.get(type);
-    
+
     let childDefs:[Function, ObjectDefinition][] = [];
-    
+
     if (object && parentDef && parentDef.discriminatorProperty) {
         childDefs = childDefs.concat(getChildClassDefinitions(type));
     }
 
     let actualType:Function | undefined;
 
-    while (childDefs.length != 0 && !actualType) {
-        const [[type, def]] = childDefs;
-        
+    while (childDefs.length !== 0 && !actualType) {
+        const [[t, def]] = childDefs;
+
         if (def.hasOwnProperty("discriminatorValue")) {
-            if (object && parentDef && def.discriminatorValue == object[parentDef.discriminatorProperty]) {
+            if (object && parentDef && def.discriminatorValue === object[parentDef.discriminatorProperty]) {
                 if (def.hasOwnProperty("discriminatorProperty")) {
-                    return getTypedInheritanceChain(type, object);
+                    return getTypedInheritanceChain(t, object);
                 }
-                actualType = type;
+                actualType = t;
             }
-        }
-        else {
-            childDefs = childDefs.concat(getChildClassDefinitions(type));
+        } else {
+            childDefs = childDefs.concat(getChildClassDefinitions(t));
         }
     }
 
@@ -89,6 +88,6 @@ export function getTypedInheritanceChain(type:Function, object?:JsonValueObject)
         actualType = type;
     }
 
-    let inheritanceChain = new Set<Function>(getInheritanceChain(Object.create(actualType.prototype)));
+    const inheritanceChain = new Set<Function>(getInheritanceChain(Object.create(actualType.prototype)));
     return Array.from(inheritanceChain).filter(t => objectDefinitions.has(t));
 }

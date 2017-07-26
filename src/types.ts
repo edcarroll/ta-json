@@ -1,7 +1,10 @@
+// tslint:disable:ext-variable-name no-empty-interface
+
 export type JsonValuePrimitive = string | number | boolean | null;
 export interface JsonValueObject {
-    [x:string]:JsonValue;
+    [name:string]:JsonValue;
 }
+
 export interface JsonValueArray extends Array<JsonValue> {}
 
 export type JsonValue = JsonValuePrimitive | JsonValueObject | JsonValueArray;

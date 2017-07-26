@@ -1,6 +1,8 @@
-import {getDefinition} from '../classes/object-definition';
+import { getDefinition } from "../classes/object-definition";
 
-export function JsonConstructor() {
+// tslint:disable:ext-variable-name only-arrow-functions
+
+export function JsonConstructor():PropertyDecorator {
     return function(target:any, key:string):void {
         const definition = getDefinition(target.constructor);
 
