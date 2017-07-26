@@ -1,7 +1,7 @@
 import {propertyConverters} from './../converters/converter';
 import {PropertyDefinition} from '../classes/property-definition';
 import {JsonValue, IDynamicObject} from '../types';
-import {objectDefinitions, getInheritanceChain, getTypedInheritanceChain} from '../classes/object-definition';
+import {objectDefinitions, getInheritanceChain, getTypedInheritanceChain, ObjectDefinition} from "../classes/object-definition";
 
 export function serialize(value:IDynamicObject | IDynamicObject[], type?:Function):JsonValue {
     if (value.constructor === Array) {
@@ -18,7 +18,9 @@ function serializeRootObject(object:IDynamicObject, type:Function = Object.getPr
         return object;
     }
 
-    const definitions = inheritanceChain.map(t => objectDefinitions.get(t));
+    const definitions = inheritanceChain
+        .map(t => objectDefinitions.get(t))
+        .filter(t => !!t) as ObjectDefinition[]; // Typescript doesn't yet support the undefined filter
 
     const output:IDynamicObject = {};
 
