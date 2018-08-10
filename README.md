@@ -22,7 +22,7 @@ $ npm install --save ta-json
 Import the necessary decorators and the JSON object from the library, and set up your class.
 
 ```typescript
-import {JSON, JsonObject, JsonProperty} from "ta-json";
+import { JSON, JsonObject, JsonProperty } from "ta-json";
 
 @JsonObject()
 export class Person {
@@ -58,6 +58,16 @@ person.fullName; // Edward Carroll
 
 For more advanced usage please read the docs below for each of the available decorators.
 
+## Overriding the `JSON` object
+
+This library doesn't make any changes to the global scope, it merely exports its main class with the same name, allowing it to be a drop in replacement for `JSON` (without any decorators, the library falls back to default functionality).
+
+If you'd prefer to import the library with a different name, you can also import `TaJson`, which will give you the same class.
+
+```typescript
+import { TaJson } from "ta-json";
+```
+
 ## Decorators
 
 ### @JsonObject()
@@ -69,7 +79,7 @@ If you would like to run functions before and after deserialization, please see 
 #### Usage
 
 ```typescript
-import {JsonObject} from "ta-json";
+import { JsonObject } from "ta-json";
 
 @JsonObject()
 export class Person {}
@@ -82,7 +92,7 @@ Properties are mapped on an opt-in basis. *Only properties that are decorated ar
 #### Usage
 
 ```typescript
-import {JsonObject, JsonProperty} from "ta-json";
+import { JsonObject, JsonProperty } from "ta-json";
 
 @JsonObject()
 export class Person {
@@ -103,7 +113,7 @@ Specifies the type to be used when serializing a property. Useful when you want 
 #### Usage
 
 ```typescript
-import {JsonObject, JsonProperty, JsonType} from "ta-json";
+import { JsonObject, JsonProperty, JsonType } from "ta-json";
 
 @JsonObject()
 export class Person {
@@ -120,7 +130,7 @@ Specifies the type to be used when serializing elements of an `Array` or `Set`. 
 #### Usage
 
 ```typescript
-import {JsonObject, JsonProperty, JsonElementType} from "ta-json";
+import { JsonObject, JsonProperty, JsonElementType } from "ta-json";
 
 @JsonObject()
 export class LotteryDraw {
@@ -139,7 +149,7 @@ Multi-level inheritance is fully supported, by the @JsonDiscriminatorValue and t
 #### Usage
 
 ```typescript
-import {JSON, JsonObject, JsonProperty, JsonDiscriminatorProperty, JsonDiscriminatorValue} from "ta-json";
+import { JSON, JsonObject, JsonProperty, JsonDiscriminatorProperty, JsonDiscriminatorValue } from "ta-json";
 
 export enum AnimalType { Cat = 0, Dog = 1 }
 
@@ -181,7 +191,7 @@ Specifies the method to run before a document has been deserialized into a class
 #### Usage
 
 ```typescript
-import {JsonObject, JsonProperty, BeforeDeserialized} from "ta-json";
+import { JsonObject, JsonProperty, BeforeDeserialized } from "ta-json";
 
 @JsonObject()
 export class Demo {
@@ -202,7 +212,7 @@ Specifies the method to run once a document has been deserialized into a class. 
 #### Usage
 
 ```typescript
-import {JsonObject, JsonProperty, OnDeserialized} from "ta-json";
+import { JsonObject, JsonProperty, OnDeserialized } from "ta-json";
 
 @JsonObject()
 export class Demo {
@@ -225,7 +235,7 @@ Specifies the method to be *optionally* run before a document has been deseriali
 #### Usage
 
 ```typescript
-import {JSON, JsonObject, JsonProperty, JsonConstructor} from "ta-json";
+import { JSON, JsonObject, JsonProperty, JsonConstructor } from "ta-json";
 
 @JsonObject()
 export class Demo {
@@ -258,7 +268,7 @@ There are two built in converters, `DateConverter` and `BufferConverter`. They a
 This example uses the built in `BufferConverter`, to output Buffer values as base64 encoded strings. Note that when parsing documents, the deserializer will convert the value back into a Buffer.
 
 ```typescript
-import {JSON, JsonObject, JsonProperty, JsonConverter, BufferConverter} from "ta-json";
+import { JSON, JsonObject, JsonProperty, JsonConverter, BufferConverter } from "ta-json";
 
 @JsonObject()
 export class ConverterDemo {
@@ -283,7 +293,7 @@ parsed.bufferValue.toString(); // hello, world!
 Below we define a converter that reverses any string value it is given.
 
 ```typescript
-import {JSON, JsonObject, JsonProperty, JsonConverter, IPropertyConverter} from "ta-json";
+import { JSON, JsonObject, JsonProperty, JsonConverter, IPropertyConverter } from "ta-json";
 
 export class ReverseStringConverter implements IPropertyConverter {
     public serialize(property:string):string {
@@ -316,7 +326,7 @@ The use of this decorator stops the property value being read from the document 
 #### Usage
 
 ```typescript
-import {JSON, JsonObject, JsonProperty, JsonReadonly} from "ta-json";
+import { JSON, JsonObject, JsonProperty, JsonReadonly } from "ta-json";
 
 @JsonObject()
 export class Person {
@@ -335,7 +345,7 @@ The use of this decorator stops the property value being written to the document
 #### Usage
 
 ```typescript
-import {JSON, JsonObject, JsonProperty, JsonReadonly} from "ta-json";
+import { JSON, JsonObject, JsonProperty, JsonReadonly } from "ta-json";
 
 @JsonObject()
 export class User {
@@ -353,7 +363,7 @@ JSON.parse<User>('{"password":"p4ssw0rd"}', User).password; // p4ssw0rd
 
 ## API
 
-### JSON
+### JSON (can also be imported with `TaJson`)
 
 #### #stringify(value:any):string
 
