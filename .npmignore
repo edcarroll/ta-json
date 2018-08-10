@@ -43,3 +43,5 @@ jspm_packages
 # TS Files
 *.ts
 !*.d.ts
+tsconfig.cjs.json
+tsconfig.json
