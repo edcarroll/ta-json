@@ -8,6 +8,4 @@ export class PropertyDefinition {
     public writeonly:boolean = false;
     public converter:IPropertyConverter;
     public serializedName:string;
-
-    constructor() {}
 }

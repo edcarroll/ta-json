@@ -5,7 +5,7 @@ export class ObjectDefinition {
     public ctr:() => void;
     public beforeDeserialized:() => void;
     public onDeserialized:() => void;
-    public discriminatorProperty:string;
+    public discriminatorProperty?:string;
     public discriminatorValue:any;
     public properties:Map<string, PropertyDefinition>;
 
@@ -73,7 +73,7 @@ export function getTypedInheritanceChain(type:Function, object?:JsonValueObject)
         const [t, def] = childDefs.shift()!; // We are checking the length in the loop so an assertion here is fine.
 
         if (def.hasOwnProperty("discriminatorValue")) {
-            if (object && parentDef && def.discriminatorValue === object[parentDef.discriminatorProperty]) {
+            if (object && parentDef && def.discriminatorValue === object[parentDef.discriminatorProperty!]) {
                 if (def.hasOwnProperty("discriminatorProperty")) {
                     return getTypedInheritanceChain(t, object);
                 }
