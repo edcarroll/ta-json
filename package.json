@@ -34,12 +34,12 @@
   ],
   "homepage": "https://github.com/edcarroll/ta-json#readme",
   "dependencies": {
-    "reflect-metadata": "^0.1.9"
+    "reflect-metadata": "^0.1.12"
   },
   "devDependencies": {
     "@edcarroll/code-style": "^2.0.0",
     "@types/node": "^8.10.24",
-    "tslint": "^5.5.0",
+    "tslint": "^5.11.0",
     "typescript": "^3.0.1"
   }
 }
