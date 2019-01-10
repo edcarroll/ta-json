@@ -15,7 +15,7 @@ export class TaJson {
         return serialize(value, type);
     }
 
-    public static stringify(object: any, type?: Function): string {
-        return JSON.stringify(this.serialize(object, type));
+    public static stringify(object: any): string {
+        return JSON.stringify(this.serialize(object));
     }
 }
