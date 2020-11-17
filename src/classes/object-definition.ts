@@ -46,12 +46,16 @@ export function getInheritanceChain(type:Object):Function[] {
 }
 
 function getChildClassDefinitions(parentType:Function):[Function, ObjectDefinition][] {
-    const childDefs:[Function, ObjectDefinition][] = [];
+    let childDefs:[Function, ObjectDefinition][] = [];
 
     objectDefinitions.forEach((def, type) => {
         const superClass = Object.getPrototypeOf(type.prototype).constructor;
         if (superClass === parentType) {
             childDefs.push([type, def]);
+            if (superClass.name !== 'Object') {
+                // recursively get definitions to allow for multi-inheritance
+                childDefs = childDefs.concat(getChildClassDefinitions(type));
+            }
         }
     });
 
