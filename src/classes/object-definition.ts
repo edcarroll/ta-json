@@ -73,11 +73,15 @@ export function getTypedInheritanceChain(type:Function, object?:JsonValueObject)
         const [t, def] = childDefs.shift()!; // We are checking the length in the loop so an assertion here is fine.
 
         if (def.hasOwnProperty("discriminatorValue")) {
-            if (object && parentDef && def.discriminatorValue === object[parentDef.discriminatorProperty!]) {
-                if (def.hasOwnProperty("discriminatorProperty")) {
-                    return getTypedInheritanceChain(t, object);
+            if (object && parentDef) {
+                if (def.discriminatorValue === object[parentDef.discriminatorProperty!]) {
+                    if (def.hasOwnProperty("discriminatorProperty")) {
+                        return getTypedInheritanceChain(t, object);
+                    }
+                    actualType = t;
+                } else {
+                    childDefs = childDefs.concat(getChildClassDefinitions(t));
                 }
-                actualType = t;
             }
         } else {
             childDefs = childDefs.concat(getChildClassDefinitions(t));
